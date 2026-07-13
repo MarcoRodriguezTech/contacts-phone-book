@@ -1,4 +1,4 @@
-# RescueLink PH: Dynamic Emergency Directory System
+# WhoYou PH: Dynamic Phone Book System
 
 A lightweight, local web application designed to manage and display critical emergency contact information in the Philippines. This project bridges a structured MySQL backend with a responsive frontend dashboard, allowing administrators to view, search, and dynamically update emergency data on the fly.
 
