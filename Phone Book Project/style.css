@@ -1,0 +1,65 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, Arial, sans-serif; background: #f4f5f7; color: #1f2430; }
+
+/* auth page */
+.auth-body { display: flex; align-items: center; justify-content: center; height: 100vh; }
+.auth-card { background: #fff; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.08); width: 340px; }
+.auth-card h1 { text-align: center; margin-top: 0; }
+.tabs { display: flex; margin-bottom: 1.2rem; border-bottom: 1px solid #e2e4e9; }
+.tab-btn { flex: 1; background: none; border: none; padding: .6rem; cursor: pointer; font-weight: 600; color: #888; border-bottom: 2px solid transparent; }
+.tab-btn.active { color: #2f5eff; border-bottom-color: #2f5eff; }
+.auth-form { display: flex; flex-direction: column; gap: .8rem; }
+.auth-form.hidden { display: none; }
+.auth-form label { display: flex; flex-direction: column; font-size: .85rem; color: #555; gap: .3rem; }
+.auth-form input { padding: .55rem; border: 1px solid #d7dae0; border-radius: 6px; font-size: 1rem; }
+.error { color: #d0342c; font-size: .9rem; }
+
+button { cursor: pointer; }
+button.primary { background: #2f5eff; color: #fff; border: none; padding: .6rem 1rem; border-radius: 6px; font-weight: 600; }
+
+/* Password Visibility & Container Styles */
+.password-container { position: relative; display: block; width: 100% }
+.password-container input { width: 100%; padding-right: 40px; box-sizing: border-box; }
+.toggle-password { display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; background: none;  border: none; font-size: 1.1rem; padding: 0;  user-select: none; }
+
+.hidden { 
+    display: none !important; 
+}
+
+/* dashboard */
+.app { display: flex; height: 100vh; }
+.sidebar { width: 240px; background: #1f2430; color: #fff; padding: 1.5rem 1.2rem; display: flex; flex-direction: column; gap: .9rem; }
+.sidebar h2 { margin: 0; }
+.welcome { color: #9aa0ac; margin: 0 0 .5rem; font-size: .9rem; }
+.sidebar input { padding: .5rem; border-radius: 6px; border: none; }
+.view-toggle { display: flex; gap: .4rem; }
+.view-toggle button { flex: 1; background: #2b3242; color: #cfd3dc; border: none; padding: .4rem; border-radius: 6px; }
+.view-toggle button.active { background: #2f5eff; color: #fff; }
+.sidebar .logout { margin-top: auto; color: #ff8080; text-decoration: none; }
+
+.content { flex: 1; padding: 2rem; overflow-y: auto; }
+.content h1 { margin-top: 0; }
+
+#contact-container.list-view { display: flex; flex-direction: column; gap: .6rem; }
+#contact-container.card-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+
+.contact { background: #fff; border-radius: 8px; padding: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.card-view .contact { flex-direction: column; align-items: stretch; gap: .6rem; }
+.contact-main { display: flex; flex-direction: column; gap: .15rem; }
+.contact-main strong { font-size: 1.05rem; }
+.contact-main span { color: #666; font-size: .88rem; }
+.contact-main .notes { font-style: italic; }
+.contact-actions { display: flex; gap: .5rem; }
+.contact-actions button { border: 1px solid #d7dae0; background: #fff; border-radius: 6px; padding: .35rem .7rem; }
+.del-btn { color: #d0342c; }
+.empty { color: #888; }
+
+/* modal */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; }
+.modal.hidden { display: none; }
+.modal-box { background: #fff; padding: 1.8rem; border-radius: 10px; width: 360px; }
+.modal-box h2 { margin-top: 0; }
+#contact-form { display: flex; flex-direction: column; gap: .7rem; }
+#contact-form label { display: flex; flex-direction: column; font-size: .85rem; color: #555; gap: .3rem; }
+#contact-form input { padding: .5rem; border: 1px solid #d7dae0; border-radius: 6px; font-size: 1rem; }
+.modal-actions { display: flex; justify-content: flex-end; gap: .6rem; }
