@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($action === 'register') {
         $activeTab = 'register';
         
+        // Match verification from login.php
         if ($password !== $confirm_password) {
             $error = 'Passwords do not match.';
         } else {
@@ -44,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare('SELECT id, password_hash FROM users WHERE username = ?');
         $stmt->execute([$username]);
         $user = $stmt->fetch();
+        
         if ($user && password_verify($password, $user['password_hash'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $username;
@@ -59,12 +61,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Phone Book — Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phone Book — Authentication</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script>
+  (function() {
+    const savedTheme = localStorage.getItem('phonebook-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
 </head>
 <body class="auth-body">
   <div class="auth-card">
     <h1>📇 Phone Book</h1>
+    
     <div class="tabs">
       <button type="button" class="tab-btn <?= $activeTab === 'login' ? 'active' : '' ?>" data-tab="login">Login</button>
       <button type="button" class="tab-btn <?= $activeTab === 'register' ? 'active' : '' ?>" data-tab="register">Register</button>
@@ -76,36 +91,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form method="post" id="login-form" class="auth-form <?= $activeTab === 'login' ? '' : 'hidden' ?>">
       <input type="hidden" name="action" value="login">
-      <label>Username <input type="text" name="username" required autofocus></label>
-      
-      <label>Password 
-        <div class="password-container">
-          <input type="password" name="password" class="password-field" required>
-          <button type="button" class="toggle-password">👁️</button>
-        </div>
+      <label>
+        Username 
+        <input type="text" name="username" required autofocus value="<?= htmlspecialchars($username ?? '') ?>">
       </label>
-      
+      <label>
+        Password 
+        <span class="password-container">
+          <input type="password" name="password" class="password-field" required>
+          <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" style="display: none;">
+            <svg class="icon-eye" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+            <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3l18 18M10.6 5.2A10.9 10.9 0 0 1 12 5c7 0 10.5 7 10.5 7a13.5 13.5 0 0 1-3.1 4.1M6.6 6.6C3.7 8.4 1.5 12 1.5 12s3.5 7 10.5 7c1.3 0 2.5-.2 3.6-.6M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </span>
+      </label>
       <button type="submit">Log In</button>
     </form>
 
     <form method="post" id="register-form" class="auth-form <?= $activeTab === 'register' ? '' : 'hidden' ?>">
       <input type="hidden" name="action" value="register">
-      <label>Username <input type="text" name="username" required></label>
-      
-      <label>Password 
-        <div class="password-container">
+      <label>
+        Username 
+        <input type="text" name="username" required value="<?= htmlspecialchars($username ?? '') ?>">
+      </label>
+      <label>
+        Password 
+        <span class="password-container">
           <input type="password" name="password" class="password-field" required minlength="4">
-          <button type="button" class="toggle-password">👁️</button>
-        </div>
+          <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" style="display: none;">
+            <svg class="icon-eye" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+            <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3l18 18M10.6 5.2A10.9 10.9 0 0 1 12 5c7 0 10.5 7 10.5 7a13.5 13.5 0 0 1-3.1 4.1M6.6 6.6C3.7 8.4 1.5 12 1.5 12s3.5 7 10.5 7c1.3 0 2.5-.2 3.6-.6M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </span>
       </label>
-      
-      <label>Confirm Password 
-        <div class="password-container">
+      <label>
+        Confirm Password 
+        <span class="password-container">
           <input type="password" name="confirm_password" class="password-field" required minlength="4">
-          <button type="button" class="toggle-password">👁️</button>
-        </div>
+          <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" style="display: none;">
+            <svg class="icon-eye" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+            <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3l18 18M10.6 5.2A10.9 10.9 0 0 1 12 5c7 0 10.5 7 10.5 7a13.5 13.5 0 0 1-3.1 4.1M6.6 6.6C3.7 8.4 1.5 12 1.5 12s3.5 7 10.5 7c1.3 0 2.5-.2 3.6-.6M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </span>
       </label>
-      
       <button type="submit">Create Account</button>
     </form>
   </div>
@@ -121,7 +164,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// Interactive eye icon functionality + dynamic display check
+// Interactive SVG eye toggle + dynamic observer
 document.querySelectorAll('.password-field').forEach(input => {
   const toggleBtn = input.parentElement.querySelector('.toggle-password');
 
@@ -134,16 +177,14 @@ document.querySelectorAll('.password-field').forEach(input => {
     }
   });
 
-  // Handle clicking the eye icon to show/hide password characters
+  // Handle clicking the eye icon to transition SVG states
   if (toggleBtn) {
-    toggleBtn.addEventListener('click', function() {
-      if (input.type === 'password') {
-        input.type = 'text';
-        this.textContent = '🙈';
-      } else {
-        input.type = 'password';
-        this.textContent = '👁️';
-      }
+    toggleBtn.addEventListener('click', () => {
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      toggleBtn.classList.toggle('is-visible', !showing);
+      toggleBtn.setAttribute('aria-pressed', String(!showing));
+      toggleBtn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
     });
   }
 });

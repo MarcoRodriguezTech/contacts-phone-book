@@ -1,97 +1,93 @@
 <?php
 session_start();
 require 'db.php';
-
-// If the user isn't logged in, block access
-if (empty($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
-
-$user_id = $_SESSION['user_id'];
-$method = $_SERVER['REQUEST_METHOD'];
-
 header('Content-Type: application/json');
 
-// --- HANDLE GET REQUESTS (Listing & Searching) ---
-if ($method === 'GET') {
-    $action = $_GET['action'] ?? '';
-    
-    if ($action === 'list') {
+if (empty($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Not logged in']);
+    exit;
+}
+$userId = $_SESSION['user_id'];
+$action = $_REQUEST['action'] ?? '';
+
+switch ($action) {
+
+    case 'list':
         $search = trim($_GET['search'] ?? '');
-        
-        if ($search !== '') {
-            // Search name or phone numbers matching the current user
-            $stmt = $pdo->prepare('SELECT * FROM contacts WHERE user_id = ? AND (name LIKE ? OR phone LIKE ?)');
-            $stmt->execute([$user_id, "%$search%", "%$search%"]);
+        $type = $_GET['type'] ?? 'personal'; // 'personal' or 'emergency'
+
+        if ($type === 'emergency') {
+            // 1. EMERGENCY MODE - Now reads safely from the renamed table
+            if ($search !== '') {
+                $stmt = $pdo->prepare("SELECT id, name, number AS phone, email, NULL AS address, description AS notes, 'emergency' AS contact_type 
+                                       FROM emergency_db.emergency_contacts
+                                       WHERE name LIKE ? OR number LIKE ? 
+                                       ORDER BY name ASC");
+                $like = "%$search%";
+                $stmt->execute([$like, $like]);
+            } else {
+                $stmt = $pdo->prepare("SELECT id, name, number AS phone, email, NULL AS address, description AS notes, 'emergency' AS contact_type 
+                                       FROM emergency_db.emergency_contacts
+                                       ORDER BY name ASC");
+                $stmt->execute();
+            }
         } else {
-            // Fetch all contacts belonging to the current logged-in user
-            $stmt = $pdo->prepare('SELECT * FROM contacts WHERE user_id = ?');
-            $stmt->execute([$user_id]);
+            // 2. PERSONAL MODE - Standard user isolation
+            if ($search !== '') {
+                $stmt = $pdo->prepare("SELECT id, name, phone, email, address, notes, 'personal' AS contact_type 
+                                       FROM contacts 
+                                       WHERE user_id = ? AND (name LIKE ? OR phone LIKE ?) 
+                                       ORDER BY name ASC");
+                $like = "%$search%";
+                $stmt->execute([$userId, $like, $like]);
+            } else {
+                $stmt = $pdo->prepare("SELECT id, name, phone, email, address, notes, 'personal' AS contact_type 
+                                       FROM contacts 
+                                       WHERE user_id = ? 
+                                       ORDER BY name ASC");
+                $stmt->execute([$userId]);
+            }
         }
-        
         echo json_encode($stmt->fetchAll());
-        exit;
-    }
-}
+        break;
 
-// --- HANDLE POST REQUESTS (Add, Edit, Delete) ---
-if ($method === 'POST') {
-    $action = $_POST['action'] ?? '';
-
-    if ($action === 'add') {
+    case 'add':
         $name = trim($_POST['name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $address = trim($_POST['address'] ?? '');
-        $notes = trim($_POST['notes'] ?? '');
-
         if ($name === '' || $phone === '') {
-            echo json_encode(['error' => 'Name and Phone are required.']);
-            exit;
+            http_response_code(422);
+            echo json_encode(['error' => 'Name and phone are required.']);
+            break;
         }
-
         $stmt = $pdo->prepare('INSERT INTO contacts (user_id, name, phone, email, address, notes) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$user_id, $name, $phone, $email, $address, $notes]);
-        echo json_encode(['success' => true]);
-        exit;
+        $stmt->execute([$userId, $name, $phone, $_POST['email'] ?? '', $_POST['address'] ?? '', $_POST['notes'] ?? '']);
+        echo json_encode(['id' => $pdo->lastInsertId()]);
+        break;
 
-    } elseif ($action === 'edit') {
-        $id = $_POST['id'] ?? '';
+    case 'edit':
+        $id = (int)($_POST['id'] ?? 0);
         $name = trim($_POST['name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $address = trim($_POST['address'] ?? '');
-        $notes = trim($_POST['notes'] ?? '');
-
-        if (!$id || $name === '' || $phone === '') {
-            echo json_encode(['error' => 'Invalid data provided.']);
-            exit;
+        if ($id === 0 || $name === '' || $phone === '') {
+            http_response_code(422);
+            echo json_encode(['error' => 'Name and phone are required.']);
+            break;
         }
+        // ownership check: only edit rows belonging to this user
+        $stmt = $pdo->prepare('UPDATE contacts SET name=?, phone=?, email=?, address=?, notes=? WHERE id=? AND user_id=?');
+        $stmt->execute([$name, $phone, $_POST['email'] ?? '', $_POST['address'] ?? '', $_POST['notes'] ?? '', $id, $userId]);
+        echo json_encode(['ok' => true]);
+        break;
 
-        // Securely update ensuring the contact belongs to this specific user
-        $stmt = $pdo->prepare('UPDATE contacts SET name = ?, phone = ?, email = ?, address = ?, notes = ? WHERE id = ? AND user_id = ?');
-        $stmt->execute([$name, $phone, $email, $address, $notes, $id, $user_id]);
-        echo json_encode(['success' => true]);
-        exit;
+    case 'delete':
+        $id = (int)($_POST['id'] ?? 0);
+        $stmt = $pdo->prepare('DELETE FROM contacts WHERE id=? AND user_id=?');
+        $stmt->execute([$id, $userId]);
+        echo json_encode(['ok' => true]);
+        break;
 
-    } elseif ($action === 'delete') {
-        $id = $_POST['id'] ?? '';
-
-        if (!$id) {
-            echo json_encode(['error' => 'No ID specified.']);
-            exit;
-        }
-
-        // Securely delete ensuring the contact belongs to this specific user
-        $stmt = $pdo->prepare('DELETE FROM contacts WHERE id = ? AND user_id = ?');
-        $stmt->execute([$id, $user_id]);
-        echo json_encode(['success' => true]);
-        exit;
-    }
+    default:
+        http_response_code(400);
+        echo json_encode(['error' => 'Unknown action']);
 }
-
-// If no valid route matched
-http_response_code(400);
-echo json_encode(['error' => 'Invalid action']);
