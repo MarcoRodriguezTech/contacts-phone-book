@@ -10,7 +10,7 @@ if (empty($_SESSION['user_id'])) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Phone Book — Dashboard</title>
+<title>WhoYou PH — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@ if (empty($_SESSION['user_id'])) {
     <aside class="sidebar">
       <h2 class="sidebar-brand">
         <img src="icons/web-icon.png" alt="Phone Book Logo" class="brand-logo">
-        Phone Book
+        WhoYou PH
       </h2>
       <p class="welcome">Hi, <?= htmlspecialchars($_SESSION['username']) ?>!</p>
       <input type="text" id="search" placeholder="Search name or phone...">

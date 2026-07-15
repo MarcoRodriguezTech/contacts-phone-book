@@ -459,10 +459,23 @@ button.primary:active { transform: translateY(1px); }
 }
 
 .content-header h1 {
-  font-size: 2.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 2.3rem; 
+  font-family: var(--font-display);
   text-transform: uppercase;
   letter-spacing: .06em;
   color: var(--text);
+}
+
+.content-header h1 .brand-logo {
+  width: 5.25rem;             
+  height: 5.25rem;            
+  object-fit: contain;        
+  display: inline-block;
+  /* Optional: Adds a subtle aesthetic lift matching your theme */
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
 }
 
 #contact-count {
@@ -968,4 +981,25 @@ button.primary:active { transform: translateY(1px); }
 
 .danger-btn:active {
   transform: translateY(1px);
+}
+
+.auth-card h1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;    
+  gap: 0.8rem;         
+  font-size: 2.1rem;   
+  line-height: 1.1;
+}
+
+.auth-card h1 .brand-logo {
+  width: 3.5rem;       
+  height: 3.5rem;   
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15)); 
+}
+
+.auth-card h1::after {
+  flex-basis: 100%;    
+  margin-top: 0.5rem;
 }

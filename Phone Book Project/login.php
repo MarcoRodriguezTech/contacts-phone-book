@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Phone Book — Authentication</title>
+<title>WhoYou PH — Authentication</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -78,7 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="auth-body">
   <div class="auth-card">
-    <h1>📇 Phone Book</h1>
+    <h1> 
+      <img src="icons/web-icon.png" alt="Phone Book Logo" class="brand-logo">
+      WhoYou PH
+    </h1>
     
     <div class="tabs">
       <button type="button" class="tab-btn <?= $activeTab === 'login' ? 'active' : '' ?>" data-tab="login">Login</button>
