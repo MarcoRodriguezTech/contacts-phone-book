@@ -5,7 +5,7 @@ A lightweight, local web application designed to manage and display critical eme
 ## 🌟 Key Features
 
 * **Pre-loaded Directory:** Loaded with 50+ official Philippine hotlines (National Hotlines, Police, BFP, Coast Guard, Red Cross, and major Metro Manila/provincial hospitals).
-* **Pre-allocated Scalability: Includes 150 pre-configured blank data slots ready for immediate deployment and on-the-fly website updates.
+* **Pre-allocated Scalability:** Includes 150 pre-configured blank data slots ready for immediate deployment and on-the-fly website updates.
 * **Unified Dashboard Interface:**
   * **Sidebar Navigation:** Smooth access to independent workspace sections.
   * **Summary Metrics:** Real-time data counters indicating Total Contacts, Starred Favorites, and Available Free Slots.
