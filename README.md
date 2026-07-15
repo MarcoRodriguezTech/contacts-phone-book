@@ -8,7 +8,7 @@ A lightweight, local web application designed to manage and display critical eme
 * **Pre-allocated Scalability:** Includes 150 pre-configured blank data slots ready for immediate deployment and on-the-fly website updates.
 * **Unified Dashboard Interface:**
   * **Sidebar Navigation:** Smooth access to independent workspace sections.
-  * **Summary Metrics:** Real-time data counters indicating Total Contacts, Starred Favorites, and Available Free Slots.
+  * **Summary Metrics:** Real-time data counters indicating Total Contacts, and Available Free Slots.
   * **Filtered Sections:** Displays separated blocks for core Emergency Hotlines and user-defined Favorites.
 * **Full CRUD Operations via Pop-up Modals:** Users can update existing placeholder records with complete Contact Profiles (Name, Number, Email, and Resource Description) using interactive JavaScript pop-up forms without changing database architecture manually.
 
